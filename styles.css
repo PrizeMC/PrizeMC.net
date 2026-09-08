@@ -1,0 +1,331 @@
+/* PrizeMC — single-page title screen. */
+
+/* Minecraft display font, self-hosted. Public domain, by JDGraphics.
+   Source: https://www.fontspace.com/minecraft-font-f28180
+   1000 upem with 100 units per pixel, so it only renders crisp at
+   font sizes that are a whole multiple of 10px. */
+@font-face {
+  font-family: 'Minecraft';
+  src: url('fonts/Minecraft-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Minecraft';
+  src: url('fonts/Minecraft-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --dusk: #0d0a08;
+  --gold: #f5b43c;             /* PrizeMC brand gold, used for hover */
+  --gold-glow: #ffd479;
+  --copper: #eda063;           /* copper trim on the gatehouse */
+  --text: #f7f1e6;
+  --muted: rgba(247, 241, 230, 0.56);
+  --faint: rgba(247, 241, 230, 0.30);
+
+  --display: 'Minecraft', system-ui, sans-serif;
+
+  --edge: clamp(1.5rem, 7vw, 8rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  color: var(--text);
+  font-family: var(--display);
+  background: var(--dusk);
+  overflow-x: hidden;
+}
+
+/* Background scene */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: url('images/background.webp') center / cover no-repeat;
+}
+
+/* Scrim: darkens the left column and the bottom strip so the
+   text stays readable over the screenshot. The gatehouse sits
+   right of centre, so the falloff clears it. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(10, 7, 5, 0.94) 0%, rgba(10, 7, 5, 0.68) 40%, rgba(10, 7, 5, 0.14) 72%, transparent 100%),
+    linear-gradient(to bottom, rgba(10, 7, 5, 0.42) 0%, transparent 22%, transparent 68%, rgba(10, 7, 5, 0.80) 100%);
+}
+
+/* Stage / layout ------------------------------------------- */
+.stage {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 8vh, 6rem) var(--edge);
+}
+
+.content {
+  width: 100%;
+  max-width: 46rem;
+}
+
+/* Entrance */
+.wordmark,
+.connect,
+.links {
+  animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.connect { animation-delay: 0.34s; }
+.links { animation-delay: 0.46s; }
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Wordmark */
+.wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 11vw, 8rem);
+  font-size: round(down, clamp(2rem, 11vw, 8rem), 10px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+/* Server addresses */
+.connect {
+  display: flex;
+  flex-direction: column;
+  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 4rem 5.5rem 1fr auto;
+  align-items: center;
+  column-gap: 1rem;
+  width: 100%;
+  padding: 1.05rem 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row + .row {
+  border-top: 1px solid rgba(247, 241, 230, 0.09);
+}
+
+/* Block renders, 300px source shown at 64px. Deliberately NOT
+   image-rendering: pixelated -- that is nearest-neighbour, which is right
+   when you scale pixel art up but aliases badly on the way down. The
+   browser's smooth filter is what we want at this size. */
+.block {
+  width: 4rem;
+  height: 4rem;
+}
+
+.plat {
+  font-family: var(--display);
+  font-size: 20px;              /* pixel font is crisp at multiples of 10px */
+  color: var(--copper);
+}
+
+.addr {
+  min-width: 0;
+}
+
+.ad {
+  display: inline;
+  font-family: var(--display);
+  font-size: 20px;
+  font-size: round(down, clamp(20px, 3.9vw, 30px), 10px);
+  line-height: 1.25;
+  color: var(--text);
+  word-break: break-word;
+  transition: color 0.25s ease;
+}
+
+.hint {
+  font-family: var(--display);
+  font-size: 20px;
+  min-width: 4.5rem;            /* reserves room for "copied" — no reflow */
+  text-align: right;
+  color: rgba(247, 241, 230, 0.62);
+  transition: color 0.25s ease;
+  white-space: nowrap;
+}
+
+/* Hover / focus */
+.row:hover .ad,
+.row:focus-visible .ad {
+  color: var(--gold);
+}
+
+.row:hover .hint,
+.row:focus-visible .hint {
+  color: var(--gold);
+}
+
+.row:focus-visible {
+  outline: none;
+}
+
+.row:focus-visible .ad {
+  outline: 2px solid rgba(245, 180, 60, 0.6);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.row.copied .ad {
+  color: var(--gold);
+}
+
+.row.copied .hint {
+  color: var(--gold-glow);
+}
+
+/* Community links */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  margin-top: clamp(2.25rem, 5vh, 3.25rem);
+}
+
+.links a {
+  position: relative;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--text);
+  text-decoration: none;
+  padding-bottom: 0.3rem;
+  transition: color 0.25s ease;
+}
+
+.links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1.5px;
+  width: 0;
+  background: var(--gold);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.links a:hover,
+.links a:focus-visible {
+  color: var(--gold);
+  outline: none;
+}
+
+.links a:hover::after,
+.links a:focus-visible::after {
+  width: 100%;
+}
+
+/* Disclaimer */
+.disclaimer {
+  position: absolute;
+  left: var(--edge);
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  font-family: var(--display);
+  font-size: 10px;              /* one CSS px per font pixel: native size */
+  line-height: 1.6;
+  color: var(--faint);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Small screens */
+@media (max-width: 720px) {
+  .stage {
+    justify-content: flex-end;
+    padding-bottom: clamp(5rem, 16vh, 8rem);
+  }
+
+  .row {
+    grid-template-columns: 4rem 1fr auto;
+    column-gap: 0.85rem;
+    row-gap: 0.4rem;
+  }
+
+  .block {
+    grid-area: 1 / 1;
+  }
+
+  .plat {
+    grid-area: 1 / 2;
+  }
+
+  .hint {
+    grid-area: 1 / 3;
+  }
+
+  .addr {
+    grid-area: 2 / 1 / 3 / -1;
+  }
+
+  /* Below ~370px the 20px step no longer fits, and phones are all 2x+
+     displays, so scale smoothly here rather than dropping to 10px. */
+  .ad {
+    font-size: clamp(1rem, 5.2vw, 20px);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .wordmark,
+  .connect,
+  .links {
+    animation: none;
+  }
+
+  .ad,
+  .links a::after,
+  .hint {
+    transition: none;
+  }
+}

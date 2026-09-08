@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PrizeMC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="images/websitelogo.ico">
+
+  <meta property="og:title" content="PrizeMC.net">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/background.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta property="og:image:width" content="1920">
+  <meta property="og:image:height" content="1131">
+  <meta name="theme-color" content="#0d0a08">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script>
+    // Fallback apex redirect. The authoritative 301 is the Cloudflare
+    // redirect rule; this only fires if a request reaches the static
+    // site on the bare domain anyway.
+    (function () {
+      var h = location.hostname.toLowerCase();
+      if (h === 'prizemc.net' || h === 'www.prizemc.net') {
+        location.replace('https://prison.prizemc.net' + location.pathname + location.search + location.hash);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <main class="stage">
+    <div class="content">
+      <h1 class="wordmark">PrizeMC</h1>
+
+      <section class="connect" aria-label="Server addresses">
+        <button class="row" type="button" data-copy="prison.PrizeMC.net">
+          <img class="block" src="images/block-grass.png" alt="" width="300" height="300">
+          <span class="plat">Java</span>
+          <span class="addr">
+            <span class="ad">prison.PrizeMC.net</span>
+          </span>
+          <span class="hint" aria-hidden="true">copy</span>
+        </button>
+
+        <button class="row" type="button" data-copy="bedrock.PrizeMC.net">
+          <img class="block" src="images/block-bedrock.png" alt="" width="300" height="300">
+          <span class="plat">Bedrock</span>
+          <span class="addr">
+            <span class="ad">bedrock.PrizeMC.net</span>
+          </span>
+          <span class="hint" aria-hidden="true">copy</span>
+        </button>
+      </section>
+
+      <nav class="links" aria-label="Community links">
+        <a href="#">Discord</a>
+        <a href="#">Documentation</a>
+        <a href="#">Store</a>
+      </nav>
+    </div>
+
+    <p class="disclaimer">We are not affiliated with Mojang Studios or Microsoft.</p>
+  </main>
+
+  <span class="visually-hidden" role="status" aria-live="polite" id="copy-status"></span>
+
+  <script src="main.js" defer></script>
+</body>
+
+</html>

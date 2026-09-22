@@ -17,17 +17,6 @@
 
   <link rel="stylesheet" href="styles.css">
 
-  <script>
-    // Fallback apex redirect. The authoritative 301 is the Cloudflare
-    // redirect rule; this only fires if a request reaches the static
-    // site on the bare domain anyway.
-    (function () {
-      var h = location.hostname.toLowerCase();
-      if (h === 'prizemc.net' || h === 'www.prizemc.net') {
-        location.replace('https://prison.prizemc.net' + location.pathname + location.search + location.hash);
-      }
-    })();
-  </script>
 </head>
 
 <body>

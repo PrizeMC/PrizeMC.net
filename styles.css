@@ -2,7 +2,8 @@
 
    The page itself stays neutral. Colour comes from the worlds: the emerald
    block in the HorizonMines screenshot on one side and, for PrisonEscape,
-   which hasn't released, a missing-texture block floating on the same line. */
+   which hasn't released, a missing-texture block floating above its name.
+   Side by side, the two panels mirror each other across the seam. */
 
 /* Minecraft display font, self-hosted. Public domain, by JDGraphics.
    Source: https://www.fontspace.com/minecraft-font-f28180
@@ -30,7 +31,6 @@
   --void-square: #170a1b;      /* the missing texture, with the lights off */
   --missing: #f800f8;          /* the missing texture, with the lights on */
   --missing-text: #ff7dff;     /* same hue, lifted for small text on --void */
-  --gold: #f5b43c;             /* PrizeMC brand gold */
   --emerald: #46e874;          /* HorizonMines brand green */
   --lantern: #f0a655;          /* lanterns in the HorizonMines screenshot */
   --text: #f4f1f5;
@@ -42,12 +42,11 @@
   --edge: clamp(1.25rem, 4.4vw, 5rem);
   --seam: 80px;                /* one square of the checker where the panels meet */
 
-  /* The screenshot fills this much of the panel from the top. The emerald
-     block's centre sits 70% of the way down the image, and the magenta cube
-     hangs on the same line. */
+  /* The screenshot fills this much of the panel from the top. */
   --art: 64%;
-  --cube-line: calc(var(--art) * 0.7);
   --cube: clamp(90px, 17vh, 190px);
+  --cube-gap: 16px;            /* between the cube, at its lowest, and the name */
+  --block: 3.5rem;             /* the block renders in the address rows */
 }
 
 *,
@@ -76,14 +75,9 @@ body {
 
 /* Masthead: lies over the top of both panels ---------------- */
 .masthead {
-  --accent: var(--gold);
   position: absolute;
   inset: 0 0 auto;
   z-index: 2;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 2rem;
   padding: clamp(1.25rem, 3.6vh, 2.5rem) var(--edge) 0;
 }
 
@@ -118,7 +112,7 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   padding: 0 var(--edge) calc(clamp(1.5rem, 3.6vh, 2.75rem) + 1.25rem);   /* room for the footer line */
-  container-type: inline-size;
+  min-width: 0;
   isolation: isolate;
 }
 
@@ -160,9 +154,11 @@ body {
 }
 
 /* Missing-texture cube ------------------------------------- */
+/* Hangs above the name, however tall the text below it gets. At its lowest,
+   tilted and bobbing, the cube reaches 0.87 of an edge below its centre. */
 .cube-stage {
   position: absolute;
-  top: var(--cube-line);
+  bottom: calc(100% + var(--cube-gap) + var(--cube) * 0.87);
   left: 50%;
   z-index: -1;
   width: 0;
@@ -188,6 +184,13 @@ body {
   width: var(--cube);
   height: var(--cube);
   transform-style: preserve-3d;
+}
+
+/* Pinned, or right-aligned text around the stage would push the faces sideways. */
+.cube,
+.face {
+  top: 0;
+  left: 0;
 }
 
 .cube-bob {
@@ -234,6 +237,10 @@ body {
 }
 
 /* World text ----------------------------------------------- */
+.world__body {
+  position: relative;
+}
+
 .world__name {
   font-weight: 700;
   font-size: 60px;
@@ -241,8 +248,11 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* The season or release date, on the same line as the description but out at
+   the far end, next to the seam. */
 .world__date {
-  display: block;
+  margin-left: auto;
+  text-align: right;
   white-space: nowrap;
 }
 
@@ -260,8 +270,10 @@ body {
 }
 
 .world__line {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
   margin-top: 0.75rem;
-  max-width: 34em;
   font-size: 20px;
   line-height: 1.35;
   color: var(--muted);
@@ -273,10 +285,10 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 0.75rem;
   font-size: 20px;
   line-height: 1.2;
   color: var(--muted);
+  white-space: nowrap;
 }
 
 /* Hidden until the status service answers. Keeps its height, so the
@@ -334,7 +346,8 @@ body {
 
 .row {
   display: grid;
-  grid-template-columns: 3.5rem 5.5rem 1fr auto;
+  grid-template-columns: var(--block) 5.5rem 1fr auto;
+  grid-template-areas: "block plat addr hint";
   align-items: center;
   column-gap: 1rem;
   width: 100%;
@@ -352,16 +365,19 @@ body {
    image-rendering: pixelated -- that is nearest-neighbour, which is right
    when you scale pixel art up but aliases badly on the way down. */
 .block {
-  width: 3.5rem;
-  height: 3.5rem;
+  grid-area: block;
+  width: var(--block);
+  height: var(--block);
 }
 
 .plat {
+  grid-area: plat;
   font-size: 20px;              /* pixel font is crisp at multiples of 10px */
   color: var(--lantern);
 }
 
 .addr {
+  grid-area: addr;
   min-width: 0;
 }
 
@@ -375,6 +391,7 @@ body {
 }
 
 .hint {
+  grid-area: hint;
   font-size: 20px;
   min-width: 4.5rem;            /* reserves room for "copied", no reflow */
   text-align: right;
@@ -405,10 +422,17 @@ body {
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem clamp(1.25rem, 2.6vw, 2.5rem);
+  gap: 0.5rem clamp(1rem, 1.2vw, 2.5rem);
 }
 
-.world__body .links {
+/* Bottom line of a panel: links on the left, status lined up with the "copy"
+   hints on the right, where the panel ends. */
+.world__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
   margin-top: clamp(0.75rem, 2vh, 1.25rem);
 }
 
@@ -470,37 +494,133 @@ body {
   white-space: nowrap;
 }
 
-/* Panel width, not viewport width, decides how the text fits ------- */
+/* These switch by viewport, not panel width, so both panels always change
+   together and stay mirror images of each other. ------------------- */
 
 /* Roomy panels: larger addresses. */
-@container (min-width: 760px) {
+@media (min-width: 1818px) {
   .ad {
     font-size: 30px;
   }
 }
 
 /* Narrow panels: address drops onto its own line. */
-@container (max-width: 530px) {
+@media (min-width: 861px) and (max-width: 1320px), (max-width: 580px) {
   .row {
-    grid-template-columns: 3.5rem 1fr auto;
+    grid-template-columns: var(--block) 1fr auto;
+    grid-template-areas:
+      "block plat hint"
+      "block addr addr";
     column-gap: 0.85rem;
     row-gap: 0.2rem;
   }
+}
 
-  .block {
-    grid-area: 1 / 1 / 3 / 2;
+/* Side by side, PrisonEscape is HorizonMines in a mirror: everything runs out
+   from the seam to the page edge. Stacked, both panels read from the left. */
+@media (min-width: 861px) {
+  .world--prison .world__body {
+    text-align: right;
   }
 
-  .plat {
-    grid-area: 1 / 2;
+  .world--prison .world__line {
+    flex-direction: row-reverse;
   }
 
-  .hint {
-    grid-area: 1 / 3;
+  .world--prison .world__date {
+    margin-right: auto;
+    margin-left: 0;
+    text-align: left;
   }
 
-  .addr {
-    grid-area: 2 / 2 / 3 / -1;
+  .world--prison .row {
+    grid-template-columns: auto 1fr 5.5rem var(--block);
+    grid-template-areas: "hint addr plat block";
+    text-align: right;
+  }
+
+  .world--prison .hint {
+    text-align: left;
+  }
+
+  .world--prison .world__foot,
+  .world--prison .status {
+    flex-direction: row-reverse;
+  }
+
+  .world--prison .links {
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1320px) {
+  .world--prison .row {
+    grid-template-columns: auto 1fr var(--block);
+    grid-template-areas:
+      "hint plat block"
+      "addr addr block";
+  }
+}
+
+/* The description and the full release date don't share a line here, so it
+   shortens to "Release: ...". */
+@media (min-width: 1272px) and (max-width: 1435px) {
+  .date-noun {
+    display: none;
+  }
+}
+
+/* Too narrow even for that: the season and release date drop to a second line,
+   still out by the seam. On phones there's no seam beside them, so they sit
+   directly under the description. */
+@media (min-width: 861px) and (max-width: 1271px), (max-width: 601px) {
+  .world__date {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 601px) {
+  .world__date {
+    text-align: left;
+  }
+}
+
+/* The links and the full status don't share a line here, so the word
+   "players" drops out: "5 online". */
+@media (min-width: 1360px) and (max-width: 1599px) {
+  .status-noun {
+    display: none;
+  }
+}
+
+/* Too narrow even for that: the status gets a line of its own, under the links. */
+@media (min-width: 861px) and (max-width: 1359px) {
+  .status {
+    flex-basis: 100%;
+  }
+}
+
+/* HorizonMines' five links take two lines here. They flow together with the
+   status, so Statistics shares the second line with it instead of sitting
+   alone, and the two panels stay the same height. */
+@media (max-width: 1056px) {
+  .world--horizon .world__foot {
+    justify-content: flex-start;
+  }
+
+  .world--horizon .links {
+    display: contents;
+  }
+
+  .world--horizon .status {
+    flex-basis: auto;
+    margin-left: auto;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1056px) {
+  .status {
+    min-height: 34px;           /* as tall as a link */
   }
 }
 
@@ -515,19 +635,11 @@ body {
 @media (max-height: 820px) and (min-width: 861px) {
   :root {
     --art: 58%;
+    --block: 3rem;
   }
 
   .world__name {
     font-size: 50px;
-  }
-
-  .block {
-    width: 3rem;
-    height: 3rem;
-  }
-
-  .row {
-    grid-template-columns: 3rem 5.5rem 1fr auto;
   }
 }
 
@@ -563,6 +675,7 @@ body {
   :root {
     --art: 380px;
     --cube: 110px;
+    --cube-gap: 29px;
     --seam-stacked: 40px;
   }
 
@@ -584,10 +697,6 @@ body {
     background-position: 0 0, 22% 100%;
   }
 
-  .cube-stage {
-    top: 125px;
-  }
-
   /* The seam runs across instead of down. */
   .world--prison::before {
     top: auto;
@@ -599,13 +708,6 @@ body {
     background-size: calc(var(--seam-stacked) * 2) calc(var(--seam-stacked) * 2);
   }
 
-  /* Statistics sits beside the wordmark, so the strapline gets the full width. */
-  .masthead > .links {
-    position: absolute;
-    top: clamp(1.25rem, 3.6vh, 2.5rem);
-    right: var(--edge);
-  }
-
   .strap {
     max-width: 30em;
   }
@@ -615,8 +717,12 @@ body {
     padding: 0.6rem 0;
   }
 
-  .world__body .links {
+  .world__foot {
     margin-top: 0.25rem;
+  }
+
+  .status {
+    margin-left: auto;
   }
 }
 

@@ -1,4 +1,8 @@
-/* PrizeMC — single-page title screen. */
+/* PrizeMC: network hub. One panel per world, side by side on one screen.
+
+   The page itself stays neutral. Colour comes from the worlds: the emerald
+   block in the HorizonMines screenshot on one side and, for PrisonEscape,
+   which hasn't released, a missing-texture block floating on the same line. */
 
 /* Minecraft display font, self-hosted. Public domain, by JDGraphics.
    Source: https://www.fontspace.com/minecraft-font-f28180
@@ -21,17 +25,29 @@
 }
 
 :root {
-  --dusk: #0d0a08;
-  --gold: #f5b43c;             /* PrizeMC brand gold, used for hover */
-  --gold-glow: #ffd479;
-  --copper: #eda063;           /* copper trim on the gatehouse */
-  --text: #f7f1e6;
-  --muted: rgba(247, 241, 230, 0.56);
-  --faint: rgba(247, 241, 230, 0.30);
+  --night: #070b0a;            /* HorizonMines side, matches the screenshot's shadows */
+  --void: #0e0611;             /* PrisonEscape side */
+  --void-square: #170a1b;      /* the missing texture, with the lights off */
+  --missing: #f800f8;          /* the missing texture, with the lights on */
+  --missing-text: #ff7dff;     /* same hue, lifted for small text on --void */
+  --gold: #f5b43c;             /* PrizeMC brand gold */
+  --emerald: #46e874;          /* HorizonMines brand green */
+  --lantern: #f0a655;          /* lanterns in the HorizonMines screenshot */
+  --text: #f4f1f5;
+  --muted: rgba(244, 241, 245, 0.70);
+  --faint: rgba(244, 241, 245, 0.56);
 
   --display: 'Minecraft', system-ui, sans-serif;
 
-  --edge: clamp(1.5rem, 7vw, 8rem);
+  --edge: clamp(1.25rem, 4.4vw, 5rem);
+  --seam: 80px;                /* one square of the checker where the panels meet */
+
+  /* The screenshot fills this much of the panel from the top. The emerald
+     block's centre sits 70% of the way down the image, and the magenta cube
+     hangs on the same line. */
+  --art: 64%;
+  --cube-line: calc(var(--art) * 0.7);
+  --cube: clamp(90px, 17vh, 190px);
 }
 
 *,
@@ -47,95 +63,282 @@ html {
 }
 
 body {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
   min-height: 100vh;
   min-height: 100svh;
   color: var(--text);
   font-family: var(--display);
-  background: var(--dusk);
-  overflow-x: hidden;
+  background: var(--night);
+  overflow-x: clip;
 }
 
-/* Background scene */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background: url('images/background.webp') center / cover no-repeat;
-}
-
-/* Scrim: darkens the left column and the bottom strip so the
-   text stays readable over the screenshot. The gatehouse sits
-   right of centre, so the falloff clears it. */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(100deg, rgba(10, 7, 5, 0.94) 0%, rgba(10, 7, 5, 0.68) 40%, rgba(10, 7, 5, 0.14) 72%, transparent 100%),
-    linear-gradient(to bottom, rgba(10, 7, 5, 0.42) 0%, transparent 22%, transparent 68%, rgba(10, 7, 5, 0.80) 100%);
-}
-
-/* Stage / layout ------------------------------------------- */
-.stage {
-  position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
+/* Masthead: lies over the top of both panels ---------------- */
+.masthead {
+  --accent: var(--gold);
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(3rem, 8vh, 6rem) var(--edge);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.25rem, 3.6vh, 2.5rem) var(--edge) 0;
 }
 
-.content {
-  width: 100%;
-  max-width: 46rem;
-}
-
-/* Entrance */
-.wordmark,
-.connect,
-.links {
-  animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.connect { animation-delay: 0.34s; }
-.links { animation-delay: 0.46s; }
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-
-/* Wordmark */
 .wordmark {
-  font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(2rem, 11vw, 8rem);
-  font-size: round(down, clamp(2rem, 11vw, 8rem), 10px);
+  font-size: clamp(40px, 5.6vw, 100px);
+  font-size: round(down, clamp(40px, 5.6vw, 100px), 10px);
   line-height: 1;
   letter-spacing: 0.01em;
   white-space: nowrap;
+}
+
+.strap {
+  margin-top: 0.75rem;
+  max-width: calc(55vw - var(--edge) - var(--seam) - 1rem);   /* stays on the screenshot */
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+/* Worlds --------------------------------------------------- */
+.worlds {
+  display: grid;
+  grid-template-columns: 11fr 9fr;
+  overflow-x: clip;             /* the cube's glow can be wider than a narrow panel */
+}
+
+.world {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--edge) calc(clamp(1.5rem, 3.6vh, 2.75rem) + 1.25rem);   /* room for the footer line */
+  container-type: inline-size;
+  isolation: isolate;
+}
+
+.world--horizon {
+  --accent: var(--emerald);
+  padding-right: calc(var(--edge) + var(--seam));   /* keep text out of the seam */
+  background: var(--night);
+}
+
+.world--prison {
+  --accent: var(--missing-text);
+  background:
+    conic-gradient(var(--void-square) 0 25%, transparent 0 50%, var(--void-square) 0 75%, transparent 0) 0 0 / 160px 160px,
+    var(--void);
+}
+
+/* Screenshot, faded into the panel's solid colour at the bottom and
+   darkened at the top so the masthead stays readable. */
+.world__art {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: var(--art);
+  background:
+    linear-gradient(to bottom, rgba(7, 11, 10, 0.78) 0%, rgba(7, 11, 10, 0.18) 34%, transparent 52%, transparent 74%, var(--night) 100%),
+    url('images/horizonmines.webp') 14% 100% / cover no-repeat;
+}
+
+/* Where the worlds meet: the checker bites one column of squares
+   out of the screenshot. */
+.world--prison::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  width: var(--seam);
+  background: conic-gradient(var(--void) 0 25%, transparent 0 50%, var(--void) 0 75%, transparent 0) 0 0 / calc(var(--seam) * 2) calc(var(--seam) * 2);
+}
+
+/* Missing-texture cube ------------------------------------- */
+.cube-stage {
+  position: absolute;
+  top: var(--cube-line);
+  left: 50%;
+  z-index: -1;
+  width: 0;
+  height: 0;
+  perspective: 1000px;
+}
+
+/* The light it throws, to match the emerald block's glow next door. */
+.cube-stage::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--cube) * -1.9);
+  left: calc(var(--cube) * -1.9);
+  width: calc(var(--cube) * 3.8);
+  height: calc(var(--cube) * 3.8);
+  background: radial-gradient(closest-side, rgba(248, 0, 248, 0.26), rgba(248, 0, 248, 0.07) 60%, transparent);
+}
+
+.cube-bob,
+.cube,
+.face {
+  position: absolute;
+  width: var(--cube);
+  height: var(--cube);
+  transform-style: preserve-3d;
+}
+
+.cube-bob {
+  top: calc(var(--cube) / -2);
+  left: calc(var(--cube) / -2);
+  animation: bob 3.6s ease-in-out infinite alternate;
+}
+
+.cube {
+  transform: rotateX(-24deg) rotateY(40deg);
+  animation: spin 16s linear infinite;
+}
+
+/* One texture, two squares by two squares, drawn rather than loaded. */
+.face {
+  backface-visibility: hidden;
+  background: conic-gradient(var(--missing) 0 25%, #000 0 50%, var(--missing) 0 75%, #000 0);
+}
+
+/* Fixed shading per side, the way blocks are lit in the game. */
+.face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--shade, 0);
+}
+
+.face--front  { --shade: 0.16; transform: translateZ(calc(var(--cube) / 2)); }
+.face--back   { --shade: 0.16; transform: rotateY(180deg) translateZ(calc(var(--cube) / 2)); }
+.face--left   { --shade: 0.38; transform: rotateY(-90deg) translateZ(calc(var(--cube) / 2)); }
+.face--right  { --shade: 0.38; transform: rotateY(90deg) translateZ(calc(var(--cube) / 2)); }
+.face--top    { --shade: 0;    transform: rotateX(90deg) translateZ(calc(var(--cube) / 2)); }
+.face--bottom { --shade: 0.55; transform: rotateX(-90deg) translateZ(calc(var(--cube) / 2)); }
+
+@keyframes spin {
+  from { transform: rotateX(-24deg) rotateY(0deg); }
+  to   { transform: rotateX(-24deg) rotateY(360deg); }
+}
+
+@keyframes bob {
+  from { transform: translateY(calc(var(--cube) * -0.07)); }
+  to   { transform: translateY(calc(var(--cube) * 0.07)); }
+}
+
+/* World text ----------------------------------------------- */
+.world__name {
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.world__date {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Scrambled date: fixed-width cells, so swapping glyphs never moves the line.
+   Cell width is 7 font pixels at any size. */
+.scramble {
+  display: inline-flex;
   color: var(--text);
+}
+
+.scramble span {
+  display: block;
+  width: 0.7em;
+  text-align: center;
+}
+
+.world__line {
+  margin-top: 0.75rem;
+  max-width: 34em;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+/* Status: a server-list signal meter plus a short label. */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.75rem;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--muted);
+}
+
+/* Hidden until the status service answers. Keeps its height, so the
+   text above doesn't jump when the answer arrives. */
+.status[hidden] {
+  display: flex;
+  visibility: hidden;
+}
+
+.signal {
+  --bar: rgba(244, 241, 245, 0.28);
+  display: inline-flex;
+  flex: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 15px;
+}
+
+.signal i {
+  display: block;
+  width: 3px;
+  background: var(--bar);
+}
+
+.signal i:nth-child(1) { height: 3px; }
+.signal i:nth-child(2) { height: 6px; }
+.signal i:nth-child(3) { height: 9px; }
+.signal i:nth-child(4) { height: 12px; }
+.signal i:nth-child(5) { height: 15px; }
+
+.status[data-state="online"] .signal { --bar: #55ff55; }   /* Minecraft chat green */
+.status[data-state="offline"] .signal { --bar: #ff5555; }  /* Minecraft chat red */
+
+/* Pinging: a lit bar walks along the meter, as it does in the server list. */
+.status[data-state="pinging"] .signal i {
+  animation: ping 1.25s steps(1) infinite;
+}
+
+.status[data-state="pinging"] .signal i:nth-child(2) { animation-delay: 0.25s; }
+.status[data-state="pinging"] .signal i:nth-child(3) { animation-delay: 0.5s; }
+.status[data-state="pinging"] .signal i:nth-child(4) { animation-delay: 0.75s; }
+.status[data-state="pinging"] .signal i:nth-child(5) { animation-delay: 1s; }
+
+@keyframes ping {
+  0%, 20% { background: var(--missing-text); }
+  21%, 100% { background: var(--bar); }
 }
 
 /* Server addresses */
 .connect {
   display: flex;
   flex-direction: column;
-  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
+  margin-top: clamp(0.5rem, 1.6vh, 1rem);
 }
 
 .row {
   display: grid;
-  grid-template-columns: 4rem 5.5rem 1fr auto;
+  grid-template-columns: 3.5rem 5.5rem 1fr auto;
   align-items: center;
   column-gap: 1rem;
   width: 100%;
-  padding: 1.05rem 0;
+  padding: clamp(0.4rem, 1.2vh, 0.8rem) 0;
   background: none;
   border: 0;
   text-align: left;
@@ -145,23 +348,17 @@ body::after {
   -webkit-tap-highlight-color: transparent;
 }
 
-.row + .row {
-  border-top: 1px solid rgba(247, 241, 230, 0.09);
-}
-
-/* Block renders, 300px source shown at 64px. Deliberately NOT
+/* Block renders, 300px source shown small. Deliberately NOT
    image-rendering: pixelated -- that is nearest-neighbour, which is right
-   when you scale pixel art up but aliases badly on the way down. The
-   browser's smooth filter is what we want at this size. */
+   when you scale pixel art up but aliases badly on the way down. */
 .block {
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
 }
 
 .plat {
-  font-family: var(--display);
   font-size: 20px;              /* pixel font is crisp at multiples of 10px */
-  color: var(--copper);
+  color: var(--lantern);
 }
 
 .addr {
@@ -170,34 +367,29 @@ body::after {
 
 .ad {
   display: inline;
-  font-family: var(--display);
   font-size: 20px;
-  font-size: round(down, clamp(20px, 3.9vw, 30px), 10px);
   line-height: 1.25;
   color: var(--text);
   word-break: break-word;
-  transition: color 0.25s ease;
+  transition: color 0.2s ease;
 }
 
 .hint {
-  font-family: var(--display);
   font-size: 20px;
-  min-width: 4.5rem;            /* reserves room for "copied" — no reflow */
+  min-width: 4.5rem;            /* reserves room for "copied", no reflow */
   text-align: right;
-  color: rgba(247, 241, 230, 0.62);
-  transition: color 0.25s ease;
+  color: var(--muted);
+  transition: color 0.2s ease;
   white-space: nowrap;
 }
 
-/* Hover / focus */
 .row:hover .ad,
-.row:focus-visible .ad {
-  color: var(--gold);
-}
-
 .row:hover .hint,
-.row:focus-visible .hint {
-  color: var(--gold);
+.row:focus-visible .ad,
+.row:focus-visible .hint,
+.row.copied .ad,
+.row.copied .hint {
+  color: var(--accent);
 }
 
 .row:focus-visible {
@@ -205,35 +397,29 @@ body::after {
 }
 
 .row:focus-visible .ad {
-  outline: 2px solid rgba(245, 180, 60, 0.6);
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
-  border-radius: 2px;
 }
 
-.row.copied .ad {
-  color: var(--gold);
-}
-
-.row.copied .hint {
-  color: var(--gold-glow);
-}
-
-/* Community links */
+/* Links */
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(1.5rem, 4vw, 2.75rem);
-  margin-top: clamp(2.25rem, 5vh, 3.25rem);
+  gap: 0.5rem clamp(1.25rem, 2.6vw, 2.5rem);
+}
+
+.world__body .links {
+  margin-top: clamp(0.75rem, 2vh, 1.25rem);
 }
 
 .links a {
   position: relative;
-  font-family: var(--display);
+  display: inline-block;
   font-size: 20px;
   color: var(--text);
   text-decoration: none;
-  padding-bottom: 0.3rem;
-  transition: color 0.25s ease;
+  padding: 0.3rem 0;
+  transition: color 0.2s ease;
 }
 
 .links a::after {
@@ -241,16 +427,15 @@ body::after {
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 1.5px;
+  height: 2px;
   width: 0;
-  background: var(--gold);
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--accent);
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .links a:hover,
 .links a:focus-visible {
-  color: var(--gold);
-  outline: none;
+  color: var(--accent);
 }
 
 .links a:hover::after,
@@ -258,62 +443,21 @@ body::after {
   width: 100%;
 }
 
-/* Disclaimer */
-.disclaimer {
+.links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Footer: one quiet line lying over the bottom of the panels, with no bar of
+   its own, so the page runs right to the edge of the screen. */
+.foot {
   position: absolute;
-  left: var(--edge);
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
-  font-family: var(--display);
+  inset: auto 0 0;
+  z-index: 2;
+  padding: 0 var(--edge) 0.75rem;
   font-size: 10px;              /* one CSS px per font pixel: native size */
   line-height: 1.6;
   color: var(--faint);
-}
-
-/* Server status: sits opposite the disclaimer, same size and baseline */
-.server-status {
-  position: absolute;
-  right: var(--edge);
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-family: var(--display);
-  font-size: 12px;              /* off the 10px grid: a touch soft on 1x screens */
-  line-height: 1.6;
-  color: rgba(247, 241, 230, 0.42);   /* between --faint and --muted */
-}
-
-/* A blocky "bubble": an 8px square with its corners notched out,
-   drawn with hard-edged shadows so it reads as pixel art. */
-.bubble {
-  --bubble: #7a7f7b;
-  --bubble-dark: #4a4e4b;
-  width: 6px;
-  height: 6px;
-  margin: 2px;
-  background: var(--bubble);
-  box-shadow:
-    -2px 0 0 0 var(--bubble-dark),
-    2px 0 0 0 var(--bubble-dark),
-    0 -2px 0 0 var(--bubble-dark),
-    0 2px 0 0 var(--bubble-dark),
-    inset -2px -2px 0 0 var(--bubble-dark);
-}
-
-.server-status[data-state="online"] .bubble {
-  --bubble: #55ff55;           /* Minecraft chat green */
-  --bubble-dark: #1f8f2f;
-}
-
-.server-status[data-state="offline"] .bubble {
-  --bubble: #ff5555;           /* Minecraft chat red */
-  --bubble-dark: #9c2323;
-}
-
-/* Hidden until the status service answers, and whenever it can't be reached */
-.server-status[hidden] {
-  display: none;
 }
 
 .visually-hidden {
@@ -326,21 +470,25 @@ body::after {
   white-space: nowrap;
 }
 
-/* Small screens */
-@media (max-width: 720px) {
-  .stage {
-    justify-content: flex-end;
-    padding-bottom: clamp(5rem, 16vh, 8rem);
-  }
+/* Panel width, not viewport width, decides how the text fits ------- */
 
+/* Roomy panels: larger addresses. */
+@container (min-width: 760px) {
+  .ad {
+    font-size: 30px;
+  }
+}
+
+/* Narrow panels: address drops onto its own line. */
+@container (max-width: 530px) {
   .row {
-    grid-template-columns: 4rem 1fr auto;
+    grid-template-columns: 3.5rem 1fr auto;
     column-gap: 0.85rem;
-    row-gap: 0.4rem;
+    row-gap: 0.2rem;
   }
 
   .block {
-    grid-area: 1 / 1;
+    grid-area: 1 / 1 / 3 / 2;
   }
 
   .plat {
@@ -352,34 +500,150 @@ body::after {
   }
 
   .addr {
-    grid-area: 2 / 1 / 3 / -1;
+    grid-area: 2 / 2 / 3 / -1;
+  }
+}
+
+/* Big screens: names grow with the room. */
+@media (min-width: 1800px) and (min-height: 900px) {
+  .world__name {
+    font-size: 80px;
+  }
+}
+
+/* Short laptop screens: lift the art so the cubes clear the text. */
+@media (max-height: 820px) and (min-width: 861px) {
+  :root {
+    --art: 58%;
   }
 
-  /* Below ~370px the 20px step no longer fits, and phones are all 2x+
-     displays, so scale smoothly here rather than dropping to 10px. */
+  .world__name {
+    font-size: 50px;
+  }
+
+  .block {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .row {
+    grid-template-columns: 3rem 5.5rem 1fr auto;
+  }
+}
+
+/* Name sizes that keep both 12-letter names inside the narrower panel. Set by
+   viewport so the two names always match. These come after the media queries
+   above so they win. */
+@media (min-width: 861px) and (max-width: 1345px) {
+  .world__name {
+    font-size: 50px;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1122px) {
+  .world__name {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 534px) {
+  .world__name {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 355px) {
+  .world__name {
+    font-size: 30px;
+  }
+}
+
+/* Stacked: one world under the other ------------------------- */
+@media (max-width: 860px) {
+  :root {
+    --art: 380px;
+    --cube: 110px;
+    --seam-stacked: 40px;
+  }
+
+  .worlds {
+    grid-template-columns: 1fr;
+  }
+
+  .world--horizon {
+    padding-top: 330px;
+    padding-right: var(--edge);
+    padding-bottom: calc(var(--seam-stacked) + 1.5rem);
+  }
+
+  .world--prison {
+    padding-top: 250px;
+  }
+
+  .world__art {
+    background-position: 0 0, 22% 100%;
+  }
+
+  .cube-stage {
+    top: 125px;
+  }
+
+  /* The seam runs across instead of down. */
+  .world--prison::before {
+    top: auto;
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    width: auto;
+    height: var(--seam-stacked);
+    background-size: calc(var(--seam-stacked) * 2) calc(var(--seam-stacked) * 2);
+  }
+
+  /* Statistics sits beside the wordmark, so the strapline gets the full width. */
+  .masthead > .links {
+    position: absolute;
+    top: clamp(1.25rem, 3.6vh, 2.5rem);
+    right: var(--edge);
+  }
+
+  .strap {
+    max-width: 30em;
+  }
+
+  /* Comfortable tap targets, without changing the type size. */
+  .links a {
+    padding: 0.6rem 0;
+  }
+
+  .world__body .links {
+    margin-top: 0.25rem;
+  }
+}
+
+/* Below ~370px the 20px step no longer fits, and phones are all 2x+
+   displays, so scale smoothly here rather than dropping to 10px. */
+@media (max-width: 420px) {
   .ad {
-    font-size: clamp(1rem, 5.2vw, 20px);
-  }
-
-  /* No room side by side with the disclaimer: stack above it. */
-  .server-status {
-    left: var(--edge);
-    right: auto;
-    bottom: calc(clamp(1.5rem, 4vh, 2.5rem) + 20px);   /* clear the disclaimer line */
+    font-size: clamp(1rem, 4.6vw, 20px);
   }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .wordmark,
-  .connect,
-  .links {
+  .cube,
+  .cube-bob,
+  .status[data-state="pinging"] .signal i {
     animation: none;
   }
 
+  .status[data-state="pinging"] .signal i:nth-child(-n+2) {
+    background: var(--missing-text);
+  }
+
   .ad,
-  .links a::after,
-  .hint {
+  .hint,
+  .links a,
+  .links a::after {
     transition: none;
   }
 }

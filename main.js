@@ -6,10 +6,7 @@
 
   var status = document.getElementById('copy-status');
 
-  function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text);
-    }
+  function legacyCopy(text) {
     return new Promise(function (resolve, reject) {
       var ta = document.createElement('textarea');
       ta.value = text;
@@ -22,6 +19,17 @@
       document.body.removeChild(ta);
       ok ? resolve() : reject();
     });
+  }
+
+  // In-app browsers (Discord's, for one) can expose the clipboard API and then
+  // refuse the write, so a rejection still gets the older method.
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () {
+        return legacyCopy(text);
+      });
+    }
+    return legacyCopy(text);
   }
 
   document.querySelectorAll('.row').forEach(function (row) {
@@ -50,11 +58,15 @@
   });
 })();
 
-// Server status: ask a public status API whether the Java server answers
-// on its Minecraft port, and colour the bubble green or red. If the
-// status service itself can't be reached, the indicator stays hidden. Browsers
-// can't open raw TCP sockets, so the ping goes through api.mcstatus.io
-// (which caches each result for up to a minute).
+// Server status: ask a public status API whether HorizonMines answers on its
+// Minecraft port, and colour the signal meter green or red. If the status
+// service itself can't be reached, the indicator stays hidden. Browsers can't
+// open raw TCP sockets, so the ping goes through api.mcstatus.io (which caches
+// each result for up to a minute).
+//
+// The address resolves to the network's Velocity proxy, so the player count
+// covers everyone connected to the network, the same number horizonmines.net
+// shows.
 
 (function () {
   'use strict';
@@ -63,7 +75,7 @@
   if (!el) return;
 
   var label = el.querySelector('.status-label');
-  var API = 'https://api.mcstatus.io/v2/status/java/prison.PrizeMC.net:25565';
+  var API = 'https://api.mcstatus.io/v2/status/java/HorizonMines.net:25565';
   var INTERVAL = 10000;
   var timer;
 
@@ -73,12 +85,12 @@
     if (state !== 'online') {
       label.textContent = 'Offline';
     } else if (players && typeof players.online === 'number') {
-      label.textContent = 'Online \u00b7 ' + players.online +
-        (players.online === 1 ? ' player' : ' players');
+      label.textContent = players.online +
+        (players.online === 1 ? ' player' : ' players') + ' online';
     } else {
       label.textContent = 'Online';
     }
-    el.title = 'prison.PrizeMC.net: ' + label.textContent;
+    el.title = 'HorizonMines.net: ' + label.textContent;
   }
 
   function check() {
@@ -100,4 +112,26 @@
   });
 
   check();
+})();
+
+// Scrambled release date for PrisonEscape: the game's obfuscated text format.
+// Only glyphs of one width are used, so it reads as noise rather than as
+// near-words. With reduced motion it stays as the question marks in the HTML.
+
+(function () {
+  'use strict';
+
+  var name = document.querySelector('[data-scramble]');
+  if (!name) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var GLYPHS = 'ABCDEFGHJKLMNOPQRSTUVWXYZabcdeghjmnopqrsuvwxyz023456789';
+  var cells = name.querySelectorAll('span');
+
+  setInterval(function () {
+    if (document.hidden) return;
+    cells.forEach(function (cell) {
+      cell.textContent = GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+    });
+  }, 90);
 })();

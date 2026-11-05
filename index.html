@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <title>PrizeMC - Prison Minecraft Server Network (Java &amp; Bedrock)</title>
-  <meta name="description" content="PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of PrisonEscape and HorizonMines. Join at prison.PrizeMC.net and track your stats at stats.prizemc.net.">
+  <title>PrizeMC - Minecraft Server Network (Java &amp; Bedrock)</title>
+  <meta name="description" content="PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of HorizonMines and the upcoming PrisonEscape. Join HorizonMines at HorizonMines.net and track your stats at stats.prizemc.net.">
   <link rel="canonical" href="https://prizemc.net/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="images/websitelogo.ico">
@@ -13,17 +13,17 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://prizemc.net/">
   <meta property="og:site_name" content="PrizeMC">
-  <meta property="og:description" content="PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of PrisonEscape and HorizonMines. Join at prison.PrizeMC.net and track your stats at stats.prizemc.net.">
-  <meta property="og:image" content="https://prizemc.net/images/background.webp">
-  <meta property="og:image:type" content="image/webp">
-  <meta property="og:image:width" content="1920">
-  <meta property="og:image:height" content="1131">
-  <meta name="theme-color" content="#0d0a08">
+  <meta property="og:description" content="PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of HorizonMines and the upcoming PrisonEscape. Join HorizonMines at HorizonMines.net and track your stats at stats.prizemc.net.">
+  <meta property="og:image" content="https://prizemc.net/images/og.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="theme-color" content="#070b0a">
 
   <meta name="twitter:card" content="summary_large_image">
 
   <script type="application/ld+json">
-  {"@context": "https://schema.org", "@type": "WebSite", "name": "PrizeMC", "url": "https://prizemc.net/", "description": "PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of PrisonEscape and HorizonMines. Join at prison.PrizeMC.net and track your stats at stats.prizemc.net.", "sameAs": ["https://discord.gg/UDhe8mMga6", "https://stats.prizemc.net", "https://store.prizemc.net", "https://horizonmines.net"]}
+  {"@context": "https://schema.org", "@type": "WebSite", "name": "PrizeMC", "url": "https://prizemc.net/", "description": "PrizeMC is a crossplay Minecraft server network for Java and Bedrock, home of HorizonMines and the upcoming PrisonEscape. Join HorizonMines at HorizonMines.net and track your stats at stats.prizemc.net.", "sameAs": ["https://stats.prizemc.net", "https://horizonmines.net"]}
   </script>
 
   <link rel="stylesheet" href="styles.css">
@@ -31,45 +31,101 @@
 </head>
 
 <body>
-  <main class="stage">
-    <div class="content">
+  <header class="masthead">
+    <div class="masthead__title">
       <h1 class="wordmark">PrizeMC</h1>
-
-      <section class="connect" aria-label="Server addresses">
-        <button class="row" type="button" data-copy="prison.PrizeMC.net">
-          <img class="block" src="images/block-grass.png" alt="" width="300" height="300">
-          <span class="plat">Java</span>
-          <span class="addr">
-            <span class="ad">prison.PrizeMC.net</span>
-          </span>
-          <span class="hint" aria-hidden="true">copy</span>
-        </button>
-
-        <button class="row" type="button" data-copy="bedrock.PrizeMC.net">
-          <img class="block" src="images/block-bedrock.png" alt="" width="300" height="300">
-          <span class="plat">Bedrock</span>
-          <span class="addr">
-            <span class="ad">bedrock.PrizeMC.net</span>
-          </span>
-          <span class="hint" aria-hidden="true">copy</span>
-        </button>
-      </section>
-
-      <nav class="links" aria-label="Community links">
-        <a href="https://discord.gg/UDhe8mMga6">Discord</a>
-        <a href="https://docs.google.com/document/d/1GlaIFboF0X7gD4o5vHMU-uc1eCAtAdjZgs3DtWGHv5E">Documentation</a>
-        <a href="https://stats.prizemc.net">Statistics</a>
-        <a href="https://store.prizemc.net">Store</a>
-      </nav>
+      <p class="strap">The Minecraft network behind HorizonMines, PrisonEscape and whatever comes next.</p>
     </div>
+    <nav class="links" aria-label="Network links">
+      <a href="https://stats.prizemc.net">Statistics</a>
+    </nav>
+  </header>
 
-    <p class="disclaimer">We are not affiliated with Mojang Studios or Microsoft.</p>
+  <main class="worlds">
 
-    <p class="server-status" id="server-status" hidden>
-      <span class="bubble" aria-hidden="true"></span>
-      <span class="status-label"></span>
-    </p>
+    <section class="world world--horizon" aria-labelledby="horizon-name">
+      <div class="world__art" aria-hidden="true"></div>
+
+      <div class="world__body">
+        <h2 class="world__name" id="horizon-name">HorizonMines</h2>
+
+        <p class="status" id="server-status" hidden>
+          <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="status-label">&nbsp;</span>
+        </p>
+
+        <p class="world__line">A skymining server, now in Season VI.</p>
+
+        <div class="connect" role="group" aria-label="HorizonMines server addresses">
+          <button class="row" type="button" data-copy="HorizonMines.net">
+            <img class="block" src="images/block-grass.png" alt="" width="300" height="300">
+            <span class="plat">Java</span>
+            <span class="addr"><span class="ad">HorizonMines.net</span></span>
+            <span class="hint" aria-hidden="true">copy</span>
+          </button>
+
+          <button class="row" type="button" data-copy="bedrock.HorizonMines.net">
+            <img class="block" src="images/block-bedrock.png" alt="" width="300" height="300">
+            <span class="plat">Bedrock</span>
+            <span class="addr"><span class="ad">bedrock.HorizonMines.net</span></span>
+            <span class="hint" aria-hidden="true">copy</span>
+          </button>
+        </div>
+
+        <nav class="links" aria-label="HorizonMines links">
+          <a href="https://horizonmines.net">Website</a>
+          <a href="https://discord.gg/hfKU95mZ3B">Discord</a>
+          <a href="https://docs.google.com/document/d/1SXTZSW4kaCaUk4uNAjI6Ds-gQRi6k-7Fsdfe8dz2acg">Docs</a>
+          <a href="https://store.horizonmines.net">Store</a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- PrisonEscape isn't released yet. On release: swap the cube for a
+         world__art screenshot (images/background.webp is the gatehouse), add
+         address rows like HorizonMines has, and use the same live status. -->
+    <section class="world world--prison" aria-labelledby="prison-name">
+      <div class="cube-stage" aria-hidden="true">
+        <div class="cube-bob">
+          <div class="cube">
+            <i class="face face--front"></i>
+            <i class="face face--back"></i>
+            <i class="face face--left"></i>
+            <i class="face face--right"></i>
+            <i class="face face--top"></i>
+            <i class="face face--bottom"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="world__body">
+        <h2 class="world__name" id="prison-name">PrisonEscape</h2>
+
+        <p class="status" data-state="pinging">
+          <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="status-label">Not released yet</span>
+        </p>
+
+        <p class="world__line">
+          A prison roleplay server.
+          <span class="world__date">Release date:
+            <span class="visually-hidden">not announced</span>
+            <span class="scramble" aria-hidden="true" data-scramble><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span></span>
+          </span>
+        </p>
+
+        <nav class="links" aria-label="PrisonEscape links">
+          <a href="https://discord.gg/UDhe8mMga6">Discord</a>
+          <a href="https://docs.google.com/document/d/1GlaIFboF0X7gD4o5vHMU-uc1eCAtAdjZgs3DtWGHv5E">Docs</a>
+        </nav>
+      </div>
+    </section>
+
   </main>
+
+  <footer class="foot">
+    <p>We are not affiliated with Mojang Studios or Microsoft.</p>
+  </footer>
 
   <span class="visually-hidden" role="status" aria-live="polite" id="copy-status"></span>
 

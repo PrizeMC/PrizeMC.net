@@ -85,8 +85,9 @@
     if (state !== 'online') {
       label.textContent = 'Offline';
     } else if (players && typeof players.online === 'number') {
-      label.textContent = players.online +
-        (players.online === 1 ? ' player' : ' players') + ' online';
+      // The noun has its own span so it can drop out where the line is tight.
+      label.innerHTML = players.online + ' <span class="status-noun">' +
+        (players.online === 1 ? 'player' : 'players') + ' </span>online';
     } else {
       label.textContent = 'Online';
     }

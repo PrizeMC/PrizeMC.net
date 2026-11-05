@@ -32,13 +32,8 @@
 
 <body>
   <header class="masthead">
-    <div class="masthead__title">
-      <h1 class="wordmark">PrizeMC</h1>
-      <p class="strap">The Minecraft network behind HorizonMines and PrisonEscape.</p>
-    </div>
-    <nav class="links" aria-label="Network links">
-      <a href="https://stats.prizemc.net">Statistics</a>
-    </nav>
+    <h1 class="wordmark">PrizeMC</h1>
+    <p class="strap">The Minecraft network behind HorizonMines and PrisonEscape.</p>
   </header>
 
   <main class="worlds">
@@ -49,12 +44,10 @@
       <div class="world__body">
         <h2 class="world__name" id="horizon-name">HorizonMines</h2>
 
-        <p class="status" id="server-status" hidden>
-          <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-          <span class="status-label">&nbsp;</span>
+        <p class="world__line">
+          A skymining server.
+          <span class="world__date">Now in Season VI.</span>
         </p>
-
-        <p class="world__line">A skymining server, now in Season VI.</p>
 
         <div class="connect" role="group" aria-label="HorizonMines server addresses">
           <button class="row" type="button" data-copy="HorizonMines.net">
@@ -72,52 +65,79 @@
           </button>
         </div>
 
-        <nav class="links" aria-label="HorizonMines links">
-          <a href="https://horizonmines.net">Website</a>
-          <a href="https://discord.gg/hfKU95mZ3B">Discord</a>
-          <a href="https://docs.google.com/document/d/1SXTZSW4kaCaUk4uNAjI6Ds-gQRi6k-7Fsdfe8dz2acg">Docs</a>
-          <a href="https://store.horizonmines.net">Store</a>
-        </nav>
+        <div class="world__foot">
+          <nav class="links" aria-label="HorizonMines links">
+            <a href="https://horizonmines.net">Website</a>
+            <a href="https://discord.gg/hfKU95mZ3B">Discord</a>
+            <a href="https://docs.google.com/document/d/1SXTZSW4kaCaUk4uNAjI6Ds-gQRi6k-7Fsdfe8dz2acg">Docs</a>
+            <a href="https://store.horizonmines.net">Store</a>
+            <a href="https://stats.prizemc.net">Statistics</a>
+          </nav>
+
+          <p class="status" id="server-status" hidden>
+            <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="status-label">&nbsp;</span>
+          </p>
+        </div>
       </div>
     </section>
 
     <!-- PrisonEscape isn't released yet. On release: swap the cube for a
-         world__art screenshot (images/background.webp is the gatehouse), add
-         address rows like HorizonMines has, and use the same live status. -->
+         world__art screenshot (images/background.webp is the gatehouse) and
+         use the same live status as HorizonMines. -->
     <section class="world world--prison" aria-labelledby="prison-name">
-      <div class="cube-stage" aria-hidden="true">
-        <div class="cube-bob">
-          <div class="cube">
-            <i class="face face--front"></i>
-            <i class="face face--back"></i>
-            <i class="face face--left"></i>
-            <i class="face face--right"></i>
-            <i class="face face--top"></i>
-            <i class="face face--bottom"></i>
+      <div class="world__body">
+        <div class="cube-stage" aria-hidden="true">
+          <div class="cube-bob">
+            <div class="cube">
+              <i class="face face--front"></i>
+              <i class="face face--back"></i>
+              <i class="face face--left"></i>
+              <i class="face face--right"></i>
+              <i class="face face--top"></i>
+              <i class="face face--bottom"></i>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="world__body">
         <h2 class="world__name" id="prison-name">PrisonEscape</h2>
-
-        <p class="status" data-state="pinging">
-          <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-          <span class="status-label">Not released yet</span>
-        </p>
 
         <p class="world__line">
           A prison roleplay server.
-          <span class="world__date">Release date:
+          <span class="world__date">Release<span class="date-noun"> date</span>:
             <span class="visually-hidden">not announced</span>
-            <span class="scramble" aria-hidden="true" data-scramble><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span></span>
+            <span class="scramble" aria-hidden="true" data-scramble><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span></span>
           </span>
         </p>
 
-        <nav class="links" aria-label="PrisonEscape links">
-          <a href="https://discord.gg/UDhe8mMga6">Discord</a>
-          <a href="https://docs.google.com/document/d/1GlaIFboF0X7gD4o5vHMU-uc1eCAtAdjZgs3DtWGHv5E">Docs</a>
-        </nav>
+        <div class="connect" role="group" aria-label="PrisonEscape server addresses">
+          <button class="row" type="button" data-copy="PrizeMC.net">
+            <img class="block" src="images/block-grass.png" alt="" width="300" height="300">
+            <span class="plat">Java</span>
+            <span class="addr"><span class="ad">PrizeMC.net</span></span>
+            <span class="hint" aria-hidden="true">copy</span>
+          </button>
+
+          <button class="row" type="button" data-copy="bedrock.PrizeMC.net">
+            <img class="block" src="images/block-bedrock.png" alt="" width="300" height="300">
+            <span class="plat">Bedrock</span>
+            <span class="addr"><span class="ad">bedrock.PrizeMC.net</span></span>
+            <span class="hint" aria-hidden="true">copy</span>
+          </button>
+        </div>
+
+        <div class="world__foot">
+          <nav class="links" aria-label="PrisonEscape links">
+            <a href="https://stats.prizemc.net">Statistics</a>
+            <a href="https://discord.gg/UDhe8mMga6">Discord</a>
+            <a href="https://docs.google.com/document/d/1GlaIFboF0X7gD4o5vHMU-uc1eCAtAdjZgs3DtWGHv5E">Docs</a>
+          </nav>
+
+          <p class="status" data-state="pinging">
+            <span class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="status-label">Not released yet</span>
+          </p>
+        </div>
       </div>
     </section>
 

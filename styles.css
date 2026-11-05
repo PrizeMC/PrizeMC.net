@@ -425,8 +425,8 @@ body {
   gap: 0.5rem clamp(1rem, 1.2vw, 2.5rem);
 }
 
-/* Bottom line of a panel: links on the left, status lined up with the "copy"
-   hints on the right, where the panel ends. */
+/* Bottom line of a panel: links at the outer edge, status lined up with the
+   "copy" hints next to the seam. */
 .world__foot {
   display: flex;
   flex-wrap: wrap;
